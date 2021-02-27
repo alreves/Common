@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.suo
+/.vs
+bin/
+obj/
+
+# NuGet
+/packages/
+/Tgc.Lk.EnergyData/.vs/Tgc.Lk.EnergyData
