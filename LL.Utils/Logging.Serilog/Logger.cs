@@ -54,5 +54,10 @@ namespace Tgc2e.Logging.SerilogProvider
 			return null;
 			//return LogContext.PushProperty("OrderId", 1234);
 		}
+
+		public void CloseAndFlush()
+		{
+			Serilog.Log.CloseAndFlush();
+		}
 	}
 }

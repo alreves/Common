@@ -4,6 +4,7 @@
     <AssemblyName>Tgc2e.Logging.Serilog</AssemblyName>
     <RootNamespace>Tgc2e.Logging.SerilogProvider</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0-alpha</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.10.0" />
