@@ -1,11 +1,11 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tgc2e.Logging;
 using ILogger = Tgc2e.Logging.ILogger;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Logging.Test
 {
@@ -36,11 +36,40 @@ namespace Logging.Test
 		}
 
 		[TestMethod]
-		public void TestRunMethod()
+		public void TestLogMethodRequested()
 		{
 			var logData = RunLoggerActionAndGetResult((logger) => logger.LogMethodRequested(_category, this));
-			var desiredString = $"[DBG] (App=Logger.Test/Mx={Environment.MachineName}/Td={Thread.CurrentThread.ManagedThreadId}) [{_category.CategoryName}]:TestRunMethod: REQUESTED..., [{GetType().FullName}]";
+			var desiredString = $"[DBG] (App=Logger.Test/Mx={Environment.MachineName}/Td={Thread.CurrentThread.ManagedThreadId}) [{_category.CategoryName}]:TestLogMethodRequested: REQUESTED..., [{GetType().FullName}]";
 			Assert.IsTrue(logData.EndsWith(desiredString));
+		}
+
+		[TestMethod]
+		public void TestLogMethodCompleted()
+		{
+			var logData = RunLoggerActionAndGetResult((logger) => logger.LogMethodCompleted(_category, this));
+			var desiredString = $"[DBG] (App=Logger.Test/Mx={Environment.MachineName}/Td={Thread.CurrentThread.ManagedThreadId}) [{_category.CategoryName}]:TestLogMethodCompleted: COMPLETED., [{GetType().FullName}]";
+			Assert.IsTrue(logData.EndsWith(desiredString));
+		}
+
+		[TestMethod]
+		public void TestLogMethodFailed()
+		{
+			var logData = RunLoggerActionAndGetResult((logger) => logger.LogMethodFailed(_category, this));
+			var desiredString = $"[DBG] (App=Logger.Test/Mx={Environment.MachineName}/Td={Thread.CurrentThread.ManagedThreadId}) [{_category.CategoryName}]:TestLogMethodFailed: FAILED!, [{GetType().FullName}]";
+			Assert.IsTrue(logData.EndsWith(desiredString));
+		}
+
+		[TestMethod]
+		public void TestLogException()
+		{
+			var messageToWrite = "This error";
+			var exceptionToWrite = new NullReferenceException();
+
+			var logData = RunLoggerActionAndGetResult((logger) => logger.Error(_category, exceptionToWrite, messageToWrite, this));
+			logData = logData.Replace(Environment.NewLine, string.Empty);
+
+			var desiredString = $"[ERR] (App=Logger.Test/Mx={Environment.MachineName}/Td={Thread.CurrentThread.ManagedThreadId}) [{_category.CategoryName}]:{messageToWrite}, [{GetType().FullName}]{exceptionToWrite}";
+			Assert.IsTrue(logData.Contains(desiredString));
 		}
 
 		private string RunLoggerActionAndGetResult(Action<ILogger> action)
@@ -95,8 +124,6 @@ namespace Logging.Test
 				{
 					File.Delete(file);
 				}
-
-				Directory.Delete(LogsDir);
 			}
 		}
 

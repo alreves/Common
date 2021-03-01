@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Tgc2e.Logging
@@ -29,6 +30,11 @@ namespace Tgc2e.Logging
 		public static void Error(this ILogger logger, LoggingCategory category, string message, object source = null)
 		{
 			Log(logger, LogLevel.Error, category, message, null, null, source);
+		}
+
+		public static void Error(this ILogger logger, LoggingCategory category, Exception ex, string message, object source = null)
+		{
+			Log(logger, LogLevel.Error, category, message, ex, null, source);
 		}
 
 		public static void Critical(this ILogger logger, LoggingCategory category, string message, object source = null)
@@ -67,15 +73,22 @@ namespace Tgc2e.Logging
 		{
 			if (logger == null) return;
 
-			string messageToWrite = $"[{category.CategoryName}]:{message}, [{source}]";
+			var messageToWrite = new StringBuilder();
+			messageToWrite.Append($"[{category.CategoryName}]:");
+			messageToWrite.Append(message);
+
+			if (source != null)
+			{
+				messageToWrite.Append($", [{source}]");
+			}
 
 			if (exception == null)
 			{
-				logger.Log(level, messageToWrite, args);
+				logger.Log(level, messageToWrite.ToString(), args);
 			}
 			else
 			{
-				logger.Log(level, exception, messageToWrite, args);
+				logger.Log(level, exception, messageToWrite.ToString(), args);
 			}
 		}
 	}
